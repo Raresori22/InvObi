@@ -141,3 +141,15 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Database
+*.sql
+*.dump
+
+# OS clutter
+.DS_Store
+Thumbs.db
+
+# Build output
+/frontend/dist
+/frontend/build
