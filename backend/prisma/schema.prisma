@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(VIEWER)
+  createdAt DateTime @default(now())
+  items     Item[]
+}
+
+model Gestiune {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  items     Item[]
+}
+
+model Location {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  items Item[]
+}
+
+model ResponsiblePerson {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String?
+  items Item[]
+}
+
+model Item {
+  id                Int               @id @default(autoincrement())
+  inventoryNumber   String            @unique
+  name              String
+  description       String?
+  status            ItemStatus        @default(ACTIVE)
+  gestiune          Gestiune          @relation(fields: [gestiuneId], references: [id])
+  gestiuneId        Int
+  location          Location          @relation(fields: [locationId], references: [id])
+  locationId        Int
+  responsible       ResponsiblePerson @relation(fields: [responsibleId], references: [id])
+  responsibleId     Int
+  createdBy         User              @relation(fields: [createdById], references: [id])
+  createdById       Int
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  statusHistory     StatusHistory[]
+}
+
+model StatusHistory {
+  id        Int        @id @default(autoincrement())
+  item      Item       @relation(fields: [itemId], references: [id])
+  itemId    Int
+  status    ItemStatus
+  changedAt DateTime   @default(now())
+  note      String?
+}
+
+enum ItemStatus {
+  ACTIVE
+  MOVED
+  DECOMMISSIONED
+  UNAVAILABLE
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
