@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url = env("DATABASE_URL")
 }
 
 model User {
@@ -16,10 +17,10 @@ model User {
   items     Item[]
 }
 
-model Gestiune {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  items     Item[]
+model Department {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  items Item[]
 }
 
 model Location {
@@ -29,29 +30,37 @@ model Location {
 }
 
 model ResponsiblePerson {
-  id    Int    @id @default(autoincrement())
+  id    Int     @id @default(autoincrement())
   name  String
   email String?
   items Item[]
 }
 
 model Item {
-  id                Int               @id @default(autoincrement())
-  inventoryNumber   String            @unique
-  name              String
-  description       String?
-  status            ItemStatus        @default(ACTIVE)
-  gestiune          Gestiune          @relation(fields: [gestiuneId], references: [id])
-  gestiuneId        Int
-  location          Location          @relation(fields: [locationId], references: [id])
-  locationId        Int
-  responsible       ResponsiblePerson @relation(fields: [responsibleId], references: [id])
-  responsibleId     Int
-  createdBy         User              @relation(fields: [createdById], references: [id])
-  createdById       Int
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  statusHistory     StatusHistory[]
+  id              Int               @id @default(autoincrement())
+  inventoryNumber String            @unique
+  name            String
+  description     String?
+  status          ItemStatus        @default(ACTIVE)
+  department      Department        @relation(fields: [departmentId], references: [id])
+  departmentId    Int
+  location        Location          @relation(fields: [locationId], references: [id])
+  locationId      Int
+  responsible     ResponsiblePerson @relation(fields: [responsibleId], references: [id])
+  responsibleId   Int
+  createdBy       User              @relation(fields: [createdById], references: [id])
+  createdById     Int
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  statusHistory   StatusHistory[]
+  category        Category?         @relation(fields: [categoryId], references: [id])
+  categoryId      Int?
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  items Item[]
 }
 
 model StatusHistory {
