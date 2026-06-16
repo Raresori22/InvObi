@@ -22,7 +22,6 @@ app.use('/user', user);
 app.use('/location', location);
 app.use('/responsibleperson', responsiblePerson);
 
-
 app.get('/', (req, res) => {
   res.json({ 
     status: 'ok',
@@ -31,23 +30,11 @@ app.get('/', (req, res) => {
   })
 })
 
-app.get('/login', (req, res) => {
-  
-})
-
-app.post('/', (req, res) => {
-  res.send('Got a POST request!');
-})
-
-app.put('/user', (req, res) => {
-  res.send('Got a PUT request at /user');
-});
-
-app.delete('/user', (req, res) => {
-  res.send('Got a DELETE request at /user');
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong' });
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-

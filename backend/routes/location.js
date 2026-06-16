@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const prisma = require('../client')
+const prisma = require('../client');
+const authenticateToken = require('../authenticateToken');
 
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const location = await prisma.location.findMany({
-            select: { name: true }
+            select: { name: true, id: true }
         })
         res.json(location);
     } catch(error) {
@@ -13,7 +14,24 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID format' });
+
+        const location = await prisma.location.findUnique({
+            where: { id },
+            select: { name: true, id: true }
+        });
+
+        if (!location) return res.status(404).json({ error: 'Location not found' });
+        res.json(location);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { name } = req.body
     const createLocation = await prisma.location.create ({
@@ -27,7 +45,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if(isNaN(id)) {
@@ -47,5 +65,34 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
+router.put('/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if(isNaN(id)) {
+      return res.status(400).json ({ error: 'No ID found'});
+    }
+
+    const { name } = req.body;
+
+    const data = {};
+    if(name) data.name = name;
+
+    if(Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'No fields provided to update'});
+    }
+
+    const location = await prisma.location.update({
+      where: { id },
+      data,
+      select: { id: true, name: true }
+    });
+    res.json(location);
+  } catch (error) {
+    if(error.code === 'P2025') {
+      return res.status(404).json({ error: 'Location not found '});
+    }
+    res.status(500).json({ error: error.message })
+  }
+});
 
 module.exports = router;
