@@ -150,6 +150,25 @@ router.post('/token', async (req, res) => {
     }
 })
 
+router.delete('/:id', authenticateToken, async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
+        if (req.user.id === id) {
+            return res.status(400).json({ error: 'You cannot delete your own account' });
+        }
+        await prisma.user.delete({ where: { id } });
+        res.sendStatus(204);
+    } catch (error) {
+        if (error.code === 'P2025') return res.status(404).json({ error: 'User not found' });
+        if (error.code === 'P2003') {
+            return res.status(409).json({ error: 'Cannot delete user: they have created items still in the system' });
+        }
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 router.delete('/logout', async (req, res) => {
     try{
         const { token: refreshToken } = req.body;

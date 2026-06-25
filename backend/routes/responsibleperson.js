@@ -44,6 +44,9 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     });
     res.status(204).send()
   } catch (error) {
+    if (error.code === 'P2003') {
+    return res.status(409).json({ error: 'Cannot delete: still assigned to one or more items' });
+}
     if(error.code === 'P2025') {
       return res.status(404).json({ error: 'Responsible person not found' });
     }
