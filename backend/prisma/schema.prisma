@@ -17,10 +17,12 @@ model User {
   refreshTokens RefreshToken[]
 }
 
-model Department {
+model Gestiune {
   id    Int    @id @default(autoincrement())
   name  String @unique
   items Item[]
+
+  @@map("Department")
 }
 
 model Location {
@@ -41,9 +43,10 @@ model Item {
   inventoryNumber String            @unique
   name            String
   description     String?
+  cost           Decimal?           @db.Decimal(10, 2)
   status          ItemStatus        @default(ACTIVE)
-  department      Department        @relation(fields: [departmentId], references: [id])
-  departmentId    Int
+  gestiune        Gestiune          @relation(fields: [gestiuneId], references: [id])
+  gestiuneId      Int               @map("departmentId")
   location        Location          @relation(fields: [locationId], references: [id])
   locationId      Int
   responsible     ResponsiblePerson @relation(fields: [responsibleId], references: [id])
@@ -65,7 +68,7 @@ model Category {
 
 model StatusHistory {
   id        Int        @id @default(autoincrement())
-  item      Item       @relation(fields: [itemId], references: [id])
+  item      Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    Int
   status    ItemStatus
   changedAt DateTime   @default(now())
