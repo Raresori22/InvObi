@@ -59,15 +59,17 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     });
     res.status(204).send()
   } catch (error) {
-    console.log('CODE:', error.code, '| NAME:', error.constructor?.name);
-    if (error.code === 'P2003' || error.code === '23503') {
-    return res.status(409).json({ error: 'Cannot delete: still assigned to one or more items' });
-  }
-    if(error.code === 'P2025') {
-      return res.status(404).json({ error: 'Gestiune not found' });
+    if (error.code === 'P2025') {
+        return res.status(404).json({ error: 'Gestiune not found' });
     }
-    res.status(500).json({ error: error.message })
-  }
+
+    const pgCode = error.code || error.cause?.code;
+    if (pgCode === 'P2003' || pgCode === '23503' || pgCode === '23001') {
+        return res.status(409).json({ error: 'Cannot delete: still assigned to one or more items' });
+    }
+
+    res.status(500).json({ error: error.message });
+}
 })
 
 router.put('/:id', authenticateToken, async (req, res) => {
