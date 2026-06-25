@@ -22,7 +22,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
         const item = await prisma.item.findUnique({
             where: { id },
-            include: { gestiune: true, location: true, category: true, responsible: true, description: true, statusHistory: true }
+            include: { gestiune: true, location: true, category: true, responsible: true, statusHistory: true }
         });
 
         if (!item) return res.status(404).json({ error: 'Item not found' });
