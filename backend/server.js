@@ -5,7 +5,7 @@ require('dotenv').config()
 const app = express()
 const PORT = process.env.PORT || 3000
 const items = require('./routes/items');
-const department = require('./routes/department');
+const gestiune = require('./routes/gestiune');
 const category = require('./routes/category');
 const statusHistory = require('./routes/statushistory');
 const user = require('./routes/user');
@@ -15,7 +15,7 @@ const responsiblePerson = require('./routes/responsibleperson');
 app.use(cors())
 app.use(express.json())
 app.use('/items', items);
-app.use('/department', department);
+app.use('/gestiune', gestiune);
 app.use('/category', category);
 app.use('/statushistory', statusHistory);
 app.use('/user', user);
