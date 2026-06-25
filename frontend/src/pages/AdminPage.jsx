@@ -13,7 +13,7 @@ function AdminPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
  
-    // Manage Lists modal
+
     const [showQuickAddModal, setShowQuickAddModal] = useState(false);
     const [quickAddType, setQuickAddType] = useState('gestiune');
     const [quickAddName, setQuickAddName] = useState('');
@@ -76,7 +76,6 @@ function AdminPage() {
         }
     };
  
-    // ---- Manage Lists ----
     const quickAddEndpoints = {
         gestiune: '/gestiune',
         location: '/location',
@@ -208,7 +207,7 @@ function AdminPage() {
             </nav>
  
             <div className="container py-4">
-                {/* Users management */}
+
                 <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                     <h2 className="mb-0">Users</h2>
                     <button className="btn btn-outline-primary" onClick={openQuickAddModal}>
@@ -261,7 +260,6 @@ function AdminPage() {
                 )}
             </div>
  
-            {/* Manage Lists Modal */}
             {showQuickAddModal && (
                 <>
                     <div className="modal show d-block" tabIndex="-1">

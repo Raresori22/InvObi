@@ -4,11 +4,11 @@ const prisma = require('../client')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const authenticateToken = require('../authenticateToken');
-
+const authorizeAdmin = require('../authorizeAdmin');
 
 router.use(express.json())
 
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         const users = await prisma.user.findMany({
             select: { email: true, username: true, id: true, role: true }
@@ -19,7 +19,7 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         const id = parseInt(req.params.id);
         if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID format' });
@@ -37,7 +37,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         const { email, password, username } = req.body;
         if (!email || !password || !username) {
@@ -166,7 +166,7 @@ router.delete('/logout', async (req, res) => {
     }
 });
 
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         const id = parseInt(req.params.id);
         if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
@@ -187,7 +187,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeAdmin, async (req, res) => {
     try{
         const id = parseInt(req.params.id);
         if(isNaN(id)) {

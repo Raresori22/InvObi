@@ -21,7 +21,6 @@ function LoginPage() {
             const response = await api.post('/user/login', { username, password });
             const { user, accessToken, refreshToken } = response.data;
             login(user, accessToken, refreshToken);
-            // Admins go to the admin hub, everyone else to the items page
             navigate(user.role === 'ADMIN' ? '/admin' : '/items');
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong');

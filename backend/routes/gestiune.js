@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../client');
 const authenticateToken = require('../authenticateToken');
+const authorizeAdmin = require('../authorizeAdmin');
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
@@ -32,7 +33,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 });
 
 
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const { name } = req.body
     const createGestiune = await prisma.gestiune.create ({
@@ -46,7 +47,7 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if(isNaN(id)) {
@@ -69,10 +70,10 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 
     res.status(500).json({ error: error.message });
-}
+  }
 })
 
-router.put('/:id', authenticateToken, async (req, res) => {
+router.put('/:id', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if(isNaN(id)) {

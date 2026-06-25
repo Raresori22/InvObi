@@ -98,8 +98,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
         if (locationId !== undefined) updateData.locationId = locationId;
         if (responsibleId !== undefined) updateData.responsibleId = responsibleId;
         if (categoryId !== undefined) updateData.categoryId = categoryId;
-
-        // The relations the frontend table needs back
+        
         const include = {
             gestiune: true,
             location: true,
